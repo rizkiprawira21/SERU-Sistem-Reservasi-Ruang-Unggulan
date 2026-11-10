@@ -43,7 +43,7 @@ yang berasal dari PRD (aturan hari ruangan) disimpan di `prisma/seed.ts` per rua
 
 ## Catatan implementasi
 
-- **Konkurensi**: trigger SQLite + transaksi memastikan tidak ada dua reservasi
+- **Konkurensi**: advisory lock PostgreSQL + trigger + transaksi memastikan tidak ada dua reservasi
   tumpang tindih, termasuk saat dua permintaan datang bersamaan.
 - **Email**: `lib/mailer.ts` selalu menulis ke `Outbox`; bila `SMTP_HOST`,
   `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` diisi, email juga dikirim via SMTP.

@@ -16,9 +16,9 @@ notifikasi email, riwayat, dan audit.
 - **Jadwal dulu, ruangan kemudian** — pemohon memilih tanggal & jam, lalu sistem
   menampilkan semua ruangan beserta status: tersedia, dipesan, ditahan, diblokir,
   atau tidak sesuai aturan.
-- **Anti double-booking** — pengecekan dan penyimpanan dalam satu transaksi,
-  ditambah trigger SQLite atomik. Dua permintaan bersamaan pada slot yang sama:
-  hanya satu yang berhasil (diuji otomatis).
+- **Anti double-booking** — penguncian per ruangan+tanggal (`pg_advisory_xact_lock`),
+  pengecekan dalam transaksi, dan trigger PostgreSQL sebagai pengaman. Dua
+  permintaan bersamaan pada slot yang sama: hanya satu yang berhasil (diuji otomatis).
 - **Pengajuan & pembatalan** — alasan wajib, validasi kapasitas/jam/durasi,
   nomor referensi, linimasa status, pembatalan sebelum waktu mulai.
 - **Dashboard admin** — statistik, antrean menunggu, filter/pencarian, aksi
@@ -40,7 +40,8 @@ notifikasi email, riwayat, dan audit.
 
 - Node.js **20 atau lebih baru** (diuji pada Node 22)
 - npm
-- Tidak perlu server database — SQLite berjalan lokal
+- Database **PostgreSQL** (Neon, Supabase, atau Vercel Postgres). SQLite tidak
+  didukung di Vercel karena filesystem serverless tidak permanen.
 
 ## Cara menjalankan
 
@@ -48,8 +49,8 @@ notifikasi email, riwayat, dan audit.
 # 1. Install dependensi
 npm install
 
-# 2. Siapkan environment (sudah ada .env bawaan; contoh tersedia)
-cp .env.example .env   # lewati jika .env sudah ada
+# 2. Siapkan environment
+cp .env.example .env   # lalu isi DATABASE_URL dengan koneksi PostgreSQL
 
 # 3. Buat schema, trigger anti-bentrok, dan data seed
 npm run db:setup
@@ -86,8 +87,9 @@ mereka ke `/staf`. Tidak ada bagian khusus admin di beranda publik.
 | `npm run start` | Jalankan hasil build |
 | `npm run lint` / `npm run typecheck` | Pemeriksaan TypeScript (`tsc --noEmit`) |
 | `npm test` | Semua tes Vitest (unit, alur, konkurensi) |
-| `npm run db:setup` | `prisma db push` + trigger + seed |
-| `npm run db:reset` | Reset paksa + trigger + seed |
+| `npm run db:setup` | Migrasi + trigger + seed |
+| `npm run db:reset` | Reset schema + trigger + seed |
+| `npm run db:migrate` | Terapkan migrasi PostgreSQL |
 | `npm run db:seed` | Seed ulang tanpa reset schema |
 
 ## Pengujian
@@ -101,9 +103,15 @@ npm test
 - `tests/flow.test.ts` — ajukan → setujui, tolak wajib alasan, pembatalan
   pemohon, pembatalan admin + email, kapasitas, kontrol akses.
 - `tests/concurrency.test.ts` — dua dan tiga permintaan bersamaan pada slot yang
-  sama; tepat satu tersimpan, sisanya menerima konflik.
+  sama; tepat satu tersimpan, sisanya menerima konflik (uji PostgreSQL).
 
-Tes memakai database terpisah `prisma/test.db` yang dibuat ulang otomatis.
+Tes memakai database PostgreSQL terpisah. Isi `.env.test` (diabaikan Git):
+
+```env
+TEST_DATABASE_URL="postgresql://user:password@host/db?sslmode=require&schema=seru_test"
+```
+
+Schema tes (`seru_test`) dibuat ulang otomatis setiap kali `npm test` dijalankan.
 
 ## Struktur proyek
 
@@ -161,8 +169,16 @@ ada di **ASSUMPTIONS.md**.
 - Data pribadi pemohon hanya diakses pemilik dan admin; ketersediaan publik
   hanya menampilkan rentang jam, bukan identitas.
 
-Untuk produksi: gunakan HTTPS di depan aplikasi, ganti `DATABASE_URL` ke
-PostgreSQL bila perlu (skema kompatibel), dan konfigurasikan SMTP.
+## Deploy ke Vercel
+
+1. Import repo GitHub ke Vercel.
+2. Di **Settings → Environment Variables**, tambahkan `DATABASE_URL` (koneksi
+   PostgreSQL, sebaiknya host `-pooler` milik Neon/Supabase) untuk Production,
+   Preview, dan Development.
+3. Deploy. Build otomatis menjalankan `prisma generate`.
+4. Jalankan `npm run db:setup` sekali dari komputer lokal dengan `DATABASE_URL`
+   yang sama untuk membuat tabel, trigger, dan data awal.
+5. Konfigurasikan SMTP bila ingin email sungguhan.
 
 ## Email
 

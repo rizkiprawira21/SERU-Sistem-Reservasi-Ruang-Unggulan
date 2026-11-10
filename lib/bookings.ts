@@ -252,6 +252,7 @@ export async function createBooking(
     try {
       const booking = await prisma.$transaction(
         async (tx) => {
+          await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${room.id}:${input.date}`}, 0))`;
           const conflict = await findConflict(
             tx,
             room.id,

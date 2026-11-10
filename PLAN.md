@@ -11,7 +11,7 @@ PRD 1.1 menjadi sumber kebenaran; lingkup implementasi mengikuti instruksi MVP
 | Framework | Next.js 15 (App Router) + React 19 | SSR, route handler API, mudah dideploy |
 | Bahasa | TypeScript 5.9 | Validasi tipe di sisi server dan klien |
 | Styling | Tailwind CSS 3.4 + design token CSS | Mobile-first, tema terang/gelap, palet teal–oranye IDB Bali |
-| Database | Prisma 6 + SQLite | Lokal tanpa server, skema siap PostgreSQL |
+| Database | Prisma 6 + PostgreSQL | Cocok untuk Vercel; terkoneksi ke Neon/Supabase |
 | Auth | Sesi cookie httpOnly + bcryptjs | Menggantikan SSO kampus dengan mudah |
 | Email | Mailer mock → tabel `Outbox` + console; SMTP opsional | Dapat diaudit admin tanpa layanan eksternal |
 | Zona waktu | WITA (Asia/Makassar), tanggal disimpan `YYYY-MM-DD` dan jam sebagai menit | Bebas bug konversi DST/TZ |
@@ -48,7 +48,7 @@ tests/                   Tes aturan, alur, dan konkurensi
 - **Outbox** — email mock (penerima, subjek, isi, jenis).
 - **AuditLog** — aktivitas penting (login, keputusan, pembatalan, perubahan data).
 
-**Anti-bentrok:** trigger SQLite `BEFORE INSERT`/`BEFORE UPDATE` pada `Booking`
+**Anti-bentrok:** `pg_advisory_xact_lock` per ruangan+tanggal, trigger PostgreSQL `BEFORE INSERT`/`BEFORE UPDATE` pada `Booking`
 menolak (ABORT) setiap baris berstatus menahan slot yang beririsan dengan booking
 aktif atau blokir ruangan. Pengecekan aplikasi memberi pesan ramah; trigger menjadi
 jaring pengaman atomik lintas koneksi. Semua keputusan/penyimpanan berjalan dalam

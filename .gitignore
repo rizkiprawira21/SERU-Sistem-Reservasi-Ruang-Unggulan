@@ -12,3 +12,6 @@ out/
 coverage/
 next-env.d.ts
 *.tsbuildinfo
+.neon
+.vercel
+.env*
