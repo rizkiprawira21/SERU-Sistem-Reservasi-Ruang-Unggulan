@@ -3,28 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Staf — IDB Space</title>
-  <meta name="description" content="Dashboard staf IDB Space: antrean pengajuan real-time, verifikasi aturan, dan konfirmasi cepat.">
+  <title>Dashboard Staf — SERU</title>
+  <meta name="description" content="Dashboard staf SERU: antrean pengajuan real-time, verifikasi aturan, dan konfirmasi cepat.">
   <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body class="app-shell">
   <header class="site-header site-header--solid">
     <div class="wrap">
-      <a class="brand" href="index.html" aria-label="IDB Space, beranda">
+      <a class="brand" href="index.html" aria-label="SERU, beranda">
         <img class="brand__logo brand__logo--dark" src="assets/img/logo-idb.png" alt="IDB Bali">
         <span class="brand__name">
-          <strong>IDB Space</strong>
-          <span>Ruang Kampus IDB Bali</span>
+          <strong>SERU</strong>
+          <span>Sistem Reservasi Ruang Unggulan</span>
         </span>
       </a>
       <nav class="site-nav" aria-label="Navigasi">
         <a href="index.html">Beranda</a>
-        <a href="pinjam.html">Pinjam ruangan</a>
+        <a href="ketersediaan.html">Ketersediaan</a>
+        <a href="riwayat.html">Cek Status</a>
+        <a data-auth-link href="masuk.html">Masuk</a>
       </nav>
     </div>
   </header>
 
-  <main class="dash">
+  <section class="admin-gate" id="admin-gate" hidden>
+    <div class="wrap">
+      <div class="gate-card">
+        <span class="eyebrow">Akses Terbatas</span>
+        <h1>Halaman ini untuk staf pengelola.</h1>
+        <p>Masuk dengan akun staf sarana prasarana untuk melihat antrean pengajuan, memeriksa aturan, dan memberi keputusan.</p>
+        <div class="hero__actions" style="margin:0;">
+          <a class="btn btn--primary" href="masuk.html?next=staf.html">Masuk sebagai staf</a>
+          <a class="btn btn--subtle" href="index.html">Kembali ke beranda</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="dash" id="dash-content" hidden>
     <div class="wrap">
       <div class="dash-head">
         <div>
@@ -51,6 +67,26 @@
           <div class="stat__value" id="stat-ditolak">0</div>
           <div class="stat__label">Ditolak</div>
         </div>
+        <div class="stat stat--today">
+          <div class="stat__value" id="stat-today">0</div>
+          <div class="stat__label">Dipakai hari ini</div>
+        </div>
+      </div>
+
+      <section class="today-card">
+        <div class="today-card__head">
+          <div>
+            <h2>Jadwal hari ini</h2>
+            <p id="today-date">—</p>
+          </div>
+          <span class="live-dot">Diperbarui otomatis</span>
+        </div>
+        <div class="today-list" id="today-list"></div>
+      </section>
+
+      <div class="section-sep">
+        <h2>Antrean pengajuan</h2>
+        <p>Tinjau, minta perbaikan, atau beri keputusan. Penolakan wajib disertai alasan.</p>
       </div>
 
       <div class="tabs" id="tabs" role="tablist" aria-label="Filter status">
@@ -75,7 +111,7 @@
   </main>
 
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
-  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true" inert>
     <div class="drawer__head">
       <div>
         <h2 id="drawer-title">Detail pengajuan</h2>
@@ -90,5 +126,6 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/staf.js"></script>
+  <script src="assets/js/interactions.js"></script>
 </body>
 </html>

@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PEMOHON
+  ADMIN
+}
+
+enum UserType {
+  MAHASISWA
+  DOSEN
+  STAF
+}
+
+enum BookingStatus {
+  MENUNGGU
+  DISETUJUI
+  DITOLAK
+  DIBATALKAN
+}
+
+model User {
+  id           String          @id @default(cuid())
+  name         String
+  email        String          @unique
+  passwordHash String
+  role         Role            @default(PEMOHON)
+  type         UserType        @default(MAHASISWA)
+  identity     String?
+  org          String?
+  whatsapp     String?
+  createdAt    DateTime        @default(now())
+
+  bookings     Booking[]       @relation("Applicant")
+  decisions    Booking[]       @relation("DecisionMaker")
+  sessions     Session[]
+  history      StatusHistory[]
+  blocks       RoomBlock[]
+  auditLogs    AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Room {
+  id             String      @id @default(cuid())
+  slug           String      @unique
+  name           String
+  category       String
+  description    String
+  imageUrl       String?
+  building       String
+  floor          String
+  capacity       Int
+  facilities     String      @default("[]")
+  hoursJson      String
+  maxDurationMin Int         @default(240)
+  active         Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+
+  bookings       Booking[]
+  blocks         RoomBlock[]
+}
+
+model RoomBlock {
+  id          String   @id @default(cuid())
+  roomId      String
+  date        String
+  startMin    Int
+  endMin      Int
+  reason      String
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([roomId, date])
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  ref             String        @unique
+  userId          String
+  roomId          String
+  date            String
+  startMin        Int
+  endMin          Int
+  activity        String
+  purpose         String
+  participants    Int
+  status          BookingStatus @default(MENUNGGU)
+  staffNote       String?
+  rejectionReason String?
+  cancelledAt     DateTime?
+  cancelReason    String?
+  decidedById     String?
+  decidedAt       DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User          @relation("Applicant", fields: [userId], references: [id], onDelete: Restrict)
+  room            Room          @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  decidedBy       User?         @relation("DecisionMaker", fields: [decidedById], references: [id], onDelete: SetNull)
+  history         StatusHistory[]
+
+  @@index([roomId, date])
+  @@index([userId, createdAt])
+  @@index([status, date])
+}
+
+model StatusHistory {
+  id         String   @id @default(cuid())
+  bookingId  String
+  fromStatus String?
+  toStatus   String
+  note       String?
+  actorId    String?
+  createdAt  DateTime @default(now())
+
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([bookingId])
+}
+
+model Outbox {
+  id        String   @id @default(cuid())
+  to        String
+  subject   String
+  body      String
+  kind      String
+  bookingId String?
+  createdAt DateTime @default(now())
+  readAt    DateTime?
+
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  detail    String?
+  createdAt DateTime @default(now())
+
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}

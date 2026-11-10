@@ -3,31 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pinjam Ruangan — IDB Space</title>
+  <title>Pinjam Ruangan — SERU</title>
   <meta name="description" content="Ajukan peminjaman ruangan kampus IDB Bali: pilih jadwal, lihat ketersediaan, isi alasan dan fasilitas.">
   <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body class="app-shell">
   <header class="site-header site-header--solid">
     <div class="wrap">
-      <a class="brand" href="index.html" aria-label="IDB Space, beranda">
+      <a class="brand" href="index.html" aria-label="SERU, beranda">
         <img class="brand__logo brand__logo--dark" src="assets/img/logo-idb.png" alt="IDB Bali">
         <span class="brand__name">
-          <strong>IDB Space</strong>
-          <span>Ruang Kampus IDB Bali</span>
+          <strong>SERU</strong>
+          <span>Sistem Reservasi Ruang Unggulan</span>
         </span>
       </a>
       <nav class="site-nav" aria-label="Navigasi">
         <a href="index.html">Beranda</a>
+        <a href="ketersediaan.html">Ketersediaan</a>
+        <a href="riwayat.html">Cek Status</a>
         <a href="staf.html">Untuk Staf</a>
+        <a data-auth-link href="masuk.html">Masuk</a>
       </nav>
     </div>
   </header>
 
-  <section class="app-hero">
+  <section aria-label="Formulir peminjaman ruangan" class="app-hero">
     <div class="wrap">
+      <span class="eyebrow">Tiga Langkah</span>
       <h1>Pinjam ruangan</h1>
-      <p>Isi jadwal terlebih dahulu, lalu pilih ruangan yang tersedia. Pengajuan akan ditinjau oleh staf pengelola.</p>
+      <p>Lihat jadwal, pilih ruangan, kirim. Status dapat dipantau kapan saja. Pengajuan paling cepat H-2 dan paling lambat 30 hari sebelum kegiatan.</p>
     </div>
   </section>
 
@@ -35,63 +39,19 @@
     <div class="wrap">
       <div class="grid-2">
         <div>
+          <div class="session-bar" id="session-bar" hidden>
+            <span>Masuk sebagai <strong id="session-name">—</strong></span>
+            <a href="masuk.html">Ganti akun</a>
+          </div>
+
           <div class="stepper" id="stepper">
-            <span class="stepper__item is-active" data-step="1"><b>1</b> Identitas</span>
-            <span class="stepper__item" data-step="2"><b>2</b> Jadwal</span>
-            <span class="stepper__item" data-step="3"><b>3</b> Ruangan</span>
-            <span class="stepper__item" data-step="4"><b>4</b> Detail</span>
+            <span class="stepper__item is-active" data-step="1"><b>1</b> Jadwal</span>
+            <span class="stepper__item" data-step="2"><b>2</b> Ruangan</span>
+            <span class="stepper__item" data-step="3"><b>3</b> Detail &amp; kirim</span>
           </div>
 
           <form id="booking-form" novalidate>
             <div class="form-error" id="form-error" role="alert"></div>
-
-            <!-- Identitas -->
-            <section class="card">
-              <div class="card__head">
-                <div>
-                  <h2>Identitas pemohon</h2>
-                  <p>Data untuk konfirmasi dan tindak lanjut.</p>
-                </div>
-              </div>
-              <div class="field-row">
-                <div class="field">
-                  <label for="applicantType">Jenis pemohon<span class="req">*</span></label>
-                  <select class="select" id="applicantType" required>
-                    <option value="Mahasiswa">Mahasiswa</option>
-                    <option value="UKM">UKM</option>
-                    <option value="HMJ">HMJ</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="name">Nama lengkap / penanggung jawab<span class="req">*</span></label>
-                  <input class="input" type="text" id="name" placeholder="Nama sesuai identitas" required>
-                </div>
-              </div>
-              <div class="field-row">
-                <div class="field">
-                  <label for="nim">NIM / NIDN<span class="req">*</span></label>
-                  <input class="input" type="text" id="nim" placeholder="Contoh: 2023010045" required>
-                </div>
-                <div class="field" id="org-field" hidden>
-                  <label for="org">Nama UKM / HMJ<span class="req">*</span></label>
-                  <input class="input" type="text" id="org" placeholder="Nama organisasi">
-                </div>
-                <div class="field" id="position-field" hidden>
-                  <label for="position">Jabatan / PIC</label>
-                  <input class="input" type="text" id="position" placeholder="Contoh: Ketua">
-                </div>
-              </div>
-              <div class="field-row">
-                <div class="field">
-                  <label for="email">Email<span class="req">*</span></label>
-                  <input class="input" type="email" id="email" placeholder="nama@idb.ac.id" required>
-                </div>
-                <div class="field">
-                  <label for="whatsapp">WhatsApp<span class="req">*</span></label>
-                  <input class="input" type="tel" id="whatsapp" placeholder="08xxxxxxxxxx" required>
-                </div>
-              </div>
-            </section>
 
             <!-- Jadwal -->
             <section class="card">
@@ -109,16 +69,18 @@
                 </div>
                 <div class="field">
                   <label for="start">Jam mulai<span class="req">*</span></label>
-                  <input class="input" type="time" id="start" min="08:00" max="17:00" step="900" required>
+                  <input class="input" type="time" id="start" min="08:00" max="21:00" step="900" required>
                 </div>
                 <div class="field">
                   <label for="end">Jam selesai<span class="req">*</span></label>
-                  <input class="input" type="time" id="end" min="08:00" max="17:00" step="900" required>
+                  <input class="input" type="time" id="end" min="08:00" max="21:00" step="900" required>
                 </div>
               </div>
+              <div class="hint" id="date-window-hint" style="margin-bottom:6px;">Pengajuan minimal H-2 dan maksimal 30 hari ke depan.</div>
               <div class="form-actions">
                 <button class="btn btn--primary" type="button" id="check-btn" disabled>Cek ketersediaan</button>
                 <span class="door__meta" id="check-hint">Lengkapi tanggal dan jam terlebih dahulu.</span>
+                <a class="link-quiet" href="ketersediaan.html">Lihat jadwal lengkap</a>
               </div>
             </section>
 
@@ -137,10 +99,54 @@
             <section class="card" id="detail-card" hidden>
               <div class="card__head">
                 <div>
-                  <h2>Detail kegiatan</h2>
+                  <h2>Lengkapi pengajuan</h2>
                   <p id="selected-room-label">Pilih ruangan terlebih dahulu.</p>
                 </div>
               </div>
+
+              <div class="form-subhead">Identitas pemohon</div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="applicantType">Jenis pemohon<span class="req">*</span></label>
+                  <select class="select" id="applicantType" required>
+                    <option value="Mahasiswa">Mahasiswa</option>
+                    <option value="Dosen">Dosen</option>
+                    <option value="Staf">Staf</option>
+                    <option value="UKM">UKM</option>
+                    <option value="HMJ">HMJ</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="name">Nama lengkap / penanggung jawab<span class="req">*</span></label>
+                  <input class="input" type="text" id="name" placeholder="Nama sesuai identitas" required>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="nim">NIM / NIDN / NIP<span class="req">*</span></label>
+                  <input class="input" type="text" id="nim" placeholder="Contoh: 2023010045" required>
+                </div>
+                <div class="field">
+                  <label for="email">Email<span class="req">*</span></label>
+                  <input class="input" type="email" id="email" placeholder="nama@idb.ac.id" required>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="whatsapp">WhatsApp<span class="req">*</span></label>
+                  <input class="input" type="tel" id="whatsapp" placeholder="08xxxxxxxxxx" required>
+                </div>
+                <div class="field" id="org-field" hidden>
+                  <label for="org">Nama UKM / HMJ<span class="req">*</span></label>
+                  <input class="input" type="text" id="org" placeholder="Nama organisasi">
+                </div>
+                <div class="field" id="position-field" hidden>
+                  <label for="position">Jabatan / PIC</label>
+                  <input class="input" type="text" id="position" placeholder="Contoh: Ketua">
+                </div>
+              </div>
+
+              <div class="form-subhead">Detail kegiatan</div>
               <div class="field">
                 <label for="activity">Nama kegiatan<span class="req">*</span></label>
                 <input class="input" type="text" id="activity" placeholder="Contoh: Workshop Fotografi Produk" required>
@@ -157,7 +163,7 @@
               <div class="field">
                 <span class="field-label">Fasilitas yang dipinjam</span>
                 <div class="facility-picker" id="facility-picker"></div>
-                <div class="hint">Pilih fasilitas yang dibutuhkan selama kegiatan.</div>
+                <div class="hint">Pilih fasilitas yang dibutuhkan. Hanya fasilitas ruangan ini yang ditampilkan.</div>
               </div>
               <div class="field">
                 <label class="checkline">
@@ -177,11 +183,11 @@
             <div class="success">
               <div class="success__badge" aria-hidden="true">&#10003;</div>
               <h2>Pengajuan terkirim</h2>
-              <p>Simpan nomor referensi berikut untuk memantau status pengajuan.</p>
+              <p>Simpan nomor referensi berikut. Notifikasi status akan dikirim ke email kampus Anda.</p>
               <div class="ref" id="success-ref">IDB-0000-0000</div>
               <div class="recap" id="success-recap"></div>
               <div class="form-actions" style="justify-content:center;">
-                <a class="btn btn--primary" href="index.html">Kembali ke beranda</a>
+                <a class="btn btn--primary" href="riwayat.html">Cek status pengajuan</a>
                 <button class="btn btn--subtle" type="button" id="new-booking">Ajukan lagi</button>
               </div>
             </div>
@@ -217,5 +223,6 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/pinjam.js"></script>
+  <script src="assets/js/interactions.js"></script>
 </body>
 </html>

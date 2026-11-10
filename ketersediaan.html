@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ketersediaan Ruangan — SERU</title>
+  <meta name="description" content="Lihat ruangan kosong di kampus IDB Bali per tanggal dan jam, lengkap dengan status dan jadwal harian.">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="app-shell">
+  <header class="site-header site-header--solid">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="SERU, beranda">
+        <img class="brand__logo brand__logo--dark" src="assets/img/logo-idb.png" alt="IDB Bali">
+        <span class="brand__name">
+          <strong>SERU</strong>
+          <span>Sistem Reservasi Ruang Unggulan</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navigasi">
+        <a href="index.html">Beranda</a>
+        <a href="ketersediaan.html">Ketersediaan</a>
+        <a href="riwayat.html">Cek Status</a>
+        <a href="staf.html">Untuk Staf</a>
+        <a data-auth-link href="masuk.html">Masuk</a>
+      </nav>
+    </div>
+  </header>
+
+  <section aria-label="Ketersediaan ruangan" class="app-hero app-hero--compact">
+    <div class="wrap">
+      <span class="eyebrow">Ketersediaan</span>
+      <h1>Cari ruang kosong</h1>
+      <p>Pilih tanggal dan jam, lalu lihat ruangan yang benar-benar tersedia. Status berwarna menunjukkan kondisi setiap slot.</p>
+    </div>
+  </section>
+
+  <main class="app-main">
+    <div class="wrap">
+      <section class="card filter-card">
+        <div class="filter-grid">
+          <div class="field">
+            <label for="f-date">Tanggal</label>
+            <input class="input" type="date" id="f-date">
+          </div>
+          <div class="field">
+            <label for="f-start">Jam mulai</label>
+            <input class="input" type="time" id="f-start" value="09:00" step="900">
+          </div>
+          <div class="field">
+            <label for="f-end">Jam selesai</label>
+            <input class="input" type="time" id="f-end" value="12:00" step="900">
+          </div>
+          <div class="filter-actions">
+            <button class="btn btn--primary" type="button" id="f-submit">Cari ruangan</button>
+          </div>
+        </div>
+
+        <details class="advanced-filters">
+          <summary>Filter lanjutan</summary>
+          <div class="advanced-grid">
+            <div class="field">
+              <label for="f-cat">Kategori</label>
+              <select class="select" id="f-cat"><option value="">Semua kategori</option></select>
+            </div>
+            <div class="field">
+              <label for="f-cap">Kapasitas minimal</label>
+              <select class="select" id="f-cap">
+                <option value="0">Semua</option>
+                <option value="20">20+ orang</option>
+                <option value="40">40+ orang</option>
+                <option value="80">80+ orang</option>
+                <option value="150">150+ orang</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-fac">Fasilitas</label>
+              <select class="select" id="f-fac"><option value="">Semua fasilitas</option></select>
+            </div>
+          </div>
+        </details>
+        <div class="filter-note" id="filter-note"></div>
+      </section>
+
+      <div class="results-head">
+        <div>
+          <h2 id="rooms-title">Ruangan tersedia</h2>
+          <p id="rooms-sub" class="muted"></p>
+        </div>
+        <div class="legend" role="group" aria-label="Legenda status">
+          <span class="legend__item"><i class="swatch swatch--available"></i>Tersedia</span>
+          <span class="legend__item"><i class="swatch swatch--pending"></i>Menunggu</span>
+          <span class="legend__item"><i class="swatch swatch--booked"></i>Terisi</span>
+          <span class="legend__item"><i class="swatch swatch--blocked"></i>Diblokir</span>
+        </div>
+      </div>
+
+      <div class="rooms" id="rooms-grid"></div>
+
+      <details class="card schedule-card">
+        <summary class="schedule-summary">
+          <span>
+            <strong>Jadwal harian</strong>
+            <small id="schedule-sub">Gambaran pemakaian ruangan pada tanggal terpilih.</small>
+          </span>
+          <span class="schedule-summary__cta">Lihat kalender</span>
+        </summary>
+        <div class="schedule-scroll">
+          <div class="schedule" id="schedule"></div>
+        </div>
+        <div class="legend legend--bottom">
+          <span class="legend__item"><i class="swatch swatch--available"></i>Kosong</span>
+          <span class="legend__item"><i class="swatch swatch--pending"></i>Menunggu</span>
+          <span class="legend__item"><i class="swatch swatch--booked"></i>Terisi</span>
+          <span class="legend__item"><i class="swatch swatch--blocked"></i>Diblokir / kuliah</span>
+        </div>
+      </details>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>SERU · Institut Desain dan Bisnis Bali</span>
+      <span>Waktu Indonesia Tengah (WITA, UTC+8)</span>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/ketersediaan.js"></script>
+  <script src="assets/js/interactions.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-/* IDB Space — applicant flow */
+/* SERU — applicant booking flow */
 
 (function () {
   const state = {
@@ -28,6 +28,7 @@
     els.start = $('start');
     els.end = $('end');
     els.dayHint = $('day-hint');
+    els.dateWindowHint = $('date-window-hint');
     els.checkBtn = $('check-btn');
     els.checkHint = $('check-hint');
     els.roomsCard = $('rooms-card');
@@ -55,13 +56,22 @@
     els.orgField = $('org-field');
     els.positionField = $('position-field');
     els.stepper = $('stepper');
+    els.sessionBar = $('session-bar');
+    els.sessionName = $('session-name');
 
-    els.date.min = todayISO();
-    renderFacilities();
+    const min = minBookingISO();
+    const max = maxBookingISO();
+    els.date.min = min;
+    els.date.max = max;
+    els.dateWindowHint.textContent = 'Pengajuan ' + formatDateShort(min) + ' hingga ' + formatDateShort(max) + ' (H-2 s.d. 30 hari).';
+
+    renderFacilities([]);
     bind();
+    prefillUser();
     updateIdentityFields();
     updateCheckState();
     updateStepper(1);
+    prefillFromQuery(min, max);
   });
 
   function bind() {
@@ -78,7 +88,7 @@
       input.addEventListener('input', updateCheckState);
     });
 
-    els.checkBtn.addEventListener('click', checkAvailability);
+    els.checkBtn.addEventListener('click', function () { checkAvailability(true); });
     els.bookingForm.addEventListener('submit', submitBooking);
     els.newBooking.addEventListener('click', function () { window.location.reload(); });
     els.reason.addEventListener('input', function () {
@@ -88,6 +98,44 @@
         : 'Panjang alasan sudah memadai.';
       els.reasonHint.style.color = n >= 20 ? 'var(--green)' : '';
     });
+  }
+
+  function prefillUser() {
+    const user = getCurrentUser();
+    if (!user) return;
+    els.sessionBar.hidden = false;
+    els.sessionName.textContent = user.name + ' · ' + user.type;
+    if (user.type && APPLICANT_TYPES.indexOf(user.type) !== -1) {
+      els.applicantType.value = user.type;
+    }
+    if (user.name) els.name.value = user.name;
+    if (user.identity) els.nim.value = user.identity;
+    if (user.email) els.email.value = user.email;
+    if (user.whatsapp) els.whatsapp.value = user.whatsapp;
+    if (user.org) els.org.value = user.org;
+    if (user.position) els.position.value = user.position;
+    updateSummary();
+  }
+
+  function prefillFromQuery(min, max) {
+    const params = new URLSearchParams(window.location.search);
+    const date = params.get('date');
+    const start = params.get('start');
+    const end = params.get('end');
+    const room = params.get('room');
+
+    if (date && date >= min && date <= max) els.date.value = date;
+    if (start) els.start.value = start;
+    if (end) els.end.value = end;
+    if (date) els.dayHint.textContent = 'Hari: ' + dayName(date);
+
+    if (els.date.value && els.start.value && els.end.value) {
+      checkAvailability(false);
+      if (room && roomById(room)) {
+        const avail = getAvailability(roomById(room), els.date.value, els.start.value, els.end.value, getBookings());
+        if (avail.selectable) selectRoom(room, false);
+      }
+    }
   }
 
   function updateIdentityFields() {
@@ -121,7 +169,7 @@
     }
     updateCheckState();
     updateSummary();
-    updateStepper(2);
+    updateStepper(1);
   }
 
   function updateCheckState() {
@@ -144,8 +192,11 @@
     if (!els.date.value || !els.start.value || !els.end.value) {
       return 'Lengkapi tanggal, jam mulai, dan jam selesai terlebih dahulu.';
     }
-    if (els.date.value < todayISO()) {
-      return 'Tanggal tidak boleh di masa lalu.';
+    if (els.date.value < minBookingISO()) {
+      return 'Pengajuan paling cepat H-2 (' + formatDateShort(minBookingISO()) + ').';
+    }
+    if (els.date.value > maxBookingISO()) {
+      return 'Pengajuan paling lambat 30 hari ke depan (' + formatDateShort(maxBookingISO()) + ').';
     }
     if (timeToMin(els.end.value) <= timeToMin(els.start.value)) {
       return 'Jam selesai harus lebih akhir daripada jam mulai.';
@@ -153,7 +204,7 @@
     return null;
   }
 
-  function checkAvailability() {
+  function checkAvailability(scroll) {
     hideError();
     const error = validateSchedule();
     if (error) { showError(error); return; }
@@ -166,8 +217,8 @@
     renderRooms();
     updateCheckState();
     updateSummary();
-    updateStepper(3);
-    els.roomsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    updateStepper(2);
+    if (scroll !== false) els.roomsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function renderRooms() {
@@ -192,13 +243,10 @@
         '<div class="room-card__top">' +
           '<div>' +
             '<p class="room-card__name">' + escapeHtml(room.name) + '</p>' +
-            '<span class="room-card__kind">' + escapeHtml(room.kind) + ' · ' + room.capacity + ' orang</span>' +
+            '<span class="room-card__kind">' + escapeHtml(room.category) + ' · ' + escapeHtml(room.building) + ', ' + escapeHtml(room.floor) + ' · ' + room.capacity + ' orang</span>' +
           '</div>' +
-          '<span class="status ' + (availability.selectable ? 'status--available' : 'status--' + availability.status) + '">' +
-            escapeHtml(availability.label) +
-          '</span>' +
+          '<span class="status status--' + availability.status + '">' + escapeHtml(availability.label) + '</span>' +
         '</div>' +
-        '<p class="room-card__blurb">' + escapeHtml(room.blurb) + '</p>' +
         '<div class="room-card__facilities">' + facilities + '</div>' +
         '<div class="room-card__foot">' +
           '<span class="room-card__reason">' + escapeHtml(availability.reason) + '</span>' +
@@ -214,25 +262,28 @@
 
     Array.prototype.forEach.call(els.roomsGrid.querySelectorAll('button[data-room]'), function (btn) {
       if (btn.disabled) return;
-      btn.addEventListener('click', function () { selectRoom(btn.getAttribute('data-room')); });
+      btn.addEventListener('click', function () { selectRoom(btn.getAttribute('data-room'), true); });
     });
   }
 
-  function selectRoom(roomId) {
+  function selectRoom(roomId, scroll) {
     state.selectedRoomId = roomId;
     const room = roomById(roomId);
+    facilitiesChosen = [];
+    renderFacilities(room.facilities);
     renderRooms();
 
     els.detailCard.hidden = false;
     els.selectedRoomLabel.textContent = room.name + ' · ' + formatDate(state.date) + ' · ' + state.start + '–' + state.end;
     updateSummary();
-    updateStepper(4);
-    els.detailCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    updateStepper(3);
+    if (scroll !== false) els.detailCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function renderFacilities() {
+  function renderFacilities(options) {
+    const list = options || FACILITY_OPTIONS;
     els.facilityPicker.innerHTML = '';
-    FACILITY_OPTIONS.forEach(function (facility) {
+    list.forEach(function (facility) {
       const label = document.createElement('label');
       label.className = 'facility-option';
       label.innerHTML = '<input type="checkbox" value="' + escapeHtml(facility) + '"> <span>' + escapeHtml(facility) + '</span>';
@@ -285,15 +336,22 @@
     const isOrg = type === 'UKM' || type === 'HMJ';
 
     if (!els.name.value.trim()) return { error: 'Nama lengkap wajib diisi.', focus: els.name };
-    if (!els.nim.value.trim()) return { error: 'NIM / NIDN wajib diisi.', focus: els.nim };
+    if (!els.nim.value.trim()) return { error: 'NIM / NIDN / NIP wajib diisi.', focus: els.nim };
     if (isOrg && !els.org.value.trim()) return { error: 'Nama UKM / HMJ wajib diisi.', focus: els.org };
     if (!els.email.value.trim()) return { error: 'Email wajib diisi.', focus: els.email };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(els.email.value.trim())) return { error: 'Format email belum benar.', focus: els.email };
     if (!els.whatsapp.value.trim()) return { error: 'Nomor WhatsApp wajib diisi.', focus: els.whatsapp };
+    if (!/^[0-9+\-\s()]{8,}$/.test(els.whatsapp.value.trim())) return { error: 'Nomor WhatsApp belum valid (minimal 8 angka).', focus: els.whatsapp };
     if (!state.selectedRoomId) return { error: 'Pilih ruangan terlebih dahulu.', focus: null };
     if (!els.activity.value.trim()) return { error: 'Nama kegiatan wajib diisi.', focus: els.activity };
     if (els.reason.value.trim().length < 20) return { error: 'Alasan peminjaman wajib diisi minimal 20 karakter.', focus: els.reason };
     if (!els.participants.value || Number(els.participants.value) < 1) return { error: 'Jumlah peserta wajib diisi.', focus: els.participants };
     if (!els.agreement.checked) return { error: 'Centang pernyataan sebelum mengirim pengajuan.', focus: els.agreement };
+
+    const room = roomById(state.selectedRoomId);
+    if (Number(els.participants.value) > room.capacity) {
+      return { error: 'Jumlah peserta melebihi kapasitas ' + room.name + ' (' + room.capacity + ' orang).', focus: els.participants };
+    }
 
     return {
       data: {

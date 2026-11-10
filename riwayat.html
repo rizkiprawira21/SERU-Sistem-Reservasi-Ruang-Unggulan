@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cek Status &amp; Riwayat — SERU</title>
+  <meta name="description" content="Pantau status pengajuan peminjaman ruangan IDB Bali dan batalkan pengajuan yang belum berjalan.">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="app-shell">
+  <header class="site-header site-header--solid">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="SERU, beranda">
+        <img class="brand__logo brand__logo--dark" src="assets/img/logo-idb.png" alt="IDB Bali">
+        <span class="brand__name">
+          <strong>SERU</strong>
+          <span>Sistem Reservasi Ruang Unggulan</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navigasi">
+        <a href="index.html">Beranda</a>
+        <a href="ketersediaan.html">Ketersediaan</a>
+        <a href="riwayat.html">Cek Status</a>
+        <a href="staf.html">Untuk Staf</a>
+        <a data-auth-link href="masuk.html">Masuk</a>
+      </nav>
+    </div>
+  </header>
+
+  <section aria-label="Status pengajuan" class="app-hero app-hero--compact">
+    <div class="wrap">
+      <span class="eyebrow">Status Pengajuan</span>
+      <h1>Pantau pengajuan Anda</h1>
+      <p>Semua pengajuan yang dibuat di perangkat ini tampil di bawah. Masukkan nomor referensi bila ingin mencari pengajuan tertentu.</p>
+    </div>
+  </section>
+
+  <main class="app-main">
+    <div class="wrap">
+      <section class="card lookup-card">
+        <form id="lookup-form" class="lookup">
+          <div class="field grow">
+            <label for="lookup-ref">Nomor referensi</label>
+            <input class="input" type="text" id="lookup-ref" placeholder="Contoh: IDB-2026-0001">
+          </div>
+          <button class="btn btn--primary" type="submit">Cari pengajuan</button>
+        </form>
+        <div class="filter-note" id="lookup-note">Nomor referensi diberikan saat pengajuan berhasil dikirim.</div>
+      </section>
+
+      <div class="results-head">
+        <div>
+          <h2>Pengajuan di perangkat ini</h2>
+          <p class="muted" id="history-sub">Memuat…</p>
+        </div>
+        <div class="toolbar toolbar--flush">
+          <input class="input" type="search" id="history-search" placeholder="Cari kegiatan, ruangan, atau nama…" aria-label="Cari pengajuan">
+          <select class="select" id="history-status" aria-label="Filter status">
+            <option value="">Semua status</option>
+            <option value="menunggu">Menunggu</option>
+            <option value="disetujui">Disetujui</option>
+            <option value="ditolak">Ditolak</option>
+            <option value="dibatalkan">Dibatalkan</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="history" id="history-list"></div>
+    </div>
+  </main>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true" inert>
+    <div class="drawer__head">
+      <div>
+        <h2 id="drawer-title">Detail pengajuan</h2>
+        <p id="drawer-ref" class="muted" style="margin:0;font-size:.8rem;"></p>
+      </div>
+      <button class="drawer__close" id="drawer-close" type="button" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="drawer__body" id="drawer-body"></div>
+    <div class="drawer__foot" id="drawer-foot"></div>
+  </aside>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>SERU · Institut Desain dan Bisnis Bali</span>
+      <span>Status diperbarui otomatis saat staf memutuskan</span>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/riwayat.js"></script>
+  <script src="assets/js/interactions.js"></script>
+</body>
+</html>

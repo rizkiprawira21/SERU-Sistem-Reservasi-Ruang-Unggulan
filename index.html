@@ -3,198 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IDB Space — Peminjaman Ruangan Kampus IDB Bali</title>
-  <meta name="description" content="Ajukan peminjaman ruangan kampus IDB Bali dengan jadwal yang jelas, ketersediaan transparan, dan konfirmasi cepat dari staf.">
+  <title>SERU — Sistem Reservasi Ruang Unggulan | IDB Bali</title>
+  <meta name="description" content="Cek ruang kosong, ajukan peminjaman, dan pantau statusnya dalam satu tempat. Khusus sivitas akademika Institut Desain dan Bisnis Bali.">
+  <meta name="theme-color" content="#0b2038">
   <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header site-header--clear">
     <div class="wrap">
-      <a class="brand" href="index.html" aria-label="IDB Space, beranda">
+      <a class="brand" href="index.html" aria-label="SERU, beranda">
         <img class="brand__logo brand__logo--light" src="assets/img/logo-idb-light.png" alt="IDB Bali">
         <span class="brand__name">
-          <strong>IDB Space</strong>
-          <span>Ruang Kampus IDB Bali</span>
+          <strong>SERU</strong>
+          <span>Sistem Reservasi Ruang Unggulan</span>
         </span>
       </a>
       <nav class="site-nav" aria-label="Navigasi utama">
-        <a href="#cara-kerja">Cara Kerja</a>
         <a href="#ruangan">Ruangan</a>
-        <a href="#fasilitas">Fasilitas</a>
+        <a href="riwayat.html">Cek Status</a>
         <a href="staf.html">Untuk Staf</a>
+        <a data-auth-link href="masuk.html">Masuk</a>
       </nav>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="hero__slides" aria-hidden="true">
-      <img class="hero__slide is-active" src="assets/img/campus/campus-1.svg" data-photo="assets/img/campus/campus-1.jpg" alt="">
-      <img class="hero__slide" src="assets/img/campus/campus-2.svg" data-photo="assets/img/campus/campus-2.jpg" alt="">
-      <img class="hero__slide" src="assets/img/campus/campus-3.svg" data-photo="assets/img/campus/campus-3.jpg" alt="">
-      <img class="hero__slide" src="assets/img/campus/campus-4.svg" data-photo="assets/img/campus/campus-4.jpg" alt="">
-    </div>
-    <div class="hero__overlay" aria-hidden="true"></div>
-    <div class="wrap">
-      <div class="hero__inner">
-        <span class="eyebrow">Sistem Peminjaman Ruangan</span>
-        <h1>Ajukan peminjaman <span class="accent">ruangan</span></h1>
-        <p class="hero__sub">Pilih hari, tanggal, dan jam terlebih dahulu. IDB Space menampilkan ruangan yang benar-benar tersedia agar tidak ada jadwal yang bertabrakan.</p>
-        <div class="hero__actions">
-          <a class="btn btn--gold" href="pinjam.html">Pinjam ruangan</a>
-          <a class="btn btn--ghost" href="staf.html">Dashboard staf</a>
-        </div>
-        <div class="hero__chips">
-          <span class="hero__chip"><b>5</b> ruangan kampus</span>
-          <span class="hero__chip"><b>Real-time</b> untuk staf</span>
-          <span class="hero__chip"><b>Tanpa</b> jadwal bentrok</span>
-        </div>
+  <main>
+    <section class="hero hero--full">
+      <div class="hero__media" aria-hidden="true">
+        <video class="hero-video" id="hero-video" autoplay muted loop playsinline preload="metadata"
+          poster="assets/img/campus/hero-campus-poster.jpg">
+          <source src="assets/img/campus/hero-campus.mp4" type="video/mp4">
+        </video>
       </div>
-    </div>
-  </section>
+      <div class="hero__overlay" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="hero__inner hero__inner--simple">
+          <span class="eyebrow">Peminjaman Ruangan · IDB Bali</span>
+          <h1>Ruang bersama, <span class="accent">untuk karya bersama</span></h1>
+          <p class="hero__sub">Cek ruang kosong, ajukan, dan pantau statusnya — semuanya dalam satu tempat.</p>
 
-  <section class="section" id="cara-kerja">
-    <div class="wrap">
-      <div class="section__head center">
-        <span class="eyebrow">Cara Kerja</span>
-        <h2>Empat langkah, ruangan siap dipakai</h2>
-        <p class="lead">Alurnya sederhana dan berurutan. Jadwal ditentukan lebih dulu, ketersediaan ditampilkan setelahnya.</p>
-      </div>
-      <div class="steps">
-        <article class="step">
-          <h3>Pilih hari, tanggal, dan jam</h3>
-          <p>Tentukan tanggal serta jam mulai dan selesai. Nama hari terisi otomatis dari tanggal yang dipilih.</p>
-        </article>
-        <article class="step">
-          <h3>Cek ketersediaan</h3>
-          <p>Semua ruangan tampil lengkap dengan statusnya. Ruangan yang terpakai tetap terlihat, tetapi tidak dapat dipilih.</p>
-        </article>
-        <article class="step">
-          <h3>Isi alasan dan fasilitas</h3>
-          <p>Jelaskan tujuan kegiatan dan pilih fasilitas yang dibutuhkan, lalu kirim pengajuan dengan nomor referensi.</p>
-        </article>
-        <article class="step">
-          <h3>Pantau status</h3>
-          <p>Staf meninjau pengajuan secara real-time. Anda dapat melihat status, catatan staf, dan riwayat pengajuan.</p>
-        </article>
-      </div>
-    </div>
-  </section>
+          <form class="simple-search" id="quick-form" aria-label="Cari ketersediaan ruangan">
+            <div class="simple-search__field">
+              <label for="q-date">Tanggal</label>
+              <input class="input" type="date" id="q-date" required>
+            </div>
+            <div class="simple-search__field">
+              <label for="q-start">Mulai</label>
+              <input class="input" type="time" id="q-start" value="09:00" step="900" required>
+            </div>
+            <div class="simple-search__field">
+              <label for="q-end">Selesai</label>
+              <input class="input" type="time" id="q-end" value="12:00" step="900" required>
+            </div>
+            <button class="btn btn--gold" type="submit">Cek ruangan</button>
+          </form>
 
-  <section class="section section--alt" id="masuk">
-    <div class="wrap">
-      <div class="section__head">
-        <span class="eyebrow">Dua Pintu Masuk</span>
-        <h2>Satu sistem, dua pengalaman</h2>
-        <p class="lead">Tautan pemohon dan tautan staf dipisahkan agar setiap orang hanya melihat apa yang dibutuhkan.</p>
+          <p class="hero__note">Pengajuan H-2 s.d. 30 hari ke depan · tanpa jadwal bentrok</p>
+        </div>
       </div>
-      <div class="doors">
-        <article class="door door--student">
-          <span class="door__tag">Mahasiswa · UKM · HMJ</span>
-          <h2>Pinjam ruangan untuk kegiatanmu</h2>
-          <p>Ajukan ruangan untuk kegiatan akademik maupun organisasi. Lihat ketersediaan, pilih fasilitas, dan ikuti status pengajuan dari satu tempat.</p>
-          <p class="door__facilities"><strong>Fasilitas ruangan:</strong> proyektor, layar/TV, sound system, mikrofon, AC, papan tulis, meja &amp; kursi, internet.</p>
-          <div class="door__footer">
-            <a class="btn btn--primary" href="pinjam.html">Pinjam ruangan</a>
-            <span class="door__meta">Lewat ponsel, kapan saja</span>
+
+      <button class="video-toggle" id="video-toggle" type="button" aria-label="Jeda video latar">
+        <span class="video-toggle__icon" aria-hidden="true"></span>
+      </button>
+      <a class="hero__scroll" href="#cara-kerja" aria-label="Gulir ke cara kerja">
+        <span></span>
+      </a>
+    </section>
+
+    <section class="section section--simple" id="cara-kerja">
+      <div class="wrap">
+        <div class="section__head center">
+          <span class="eyebrow">Cara Kerja</span>
+          <h2>Tiga langkah, selesai.</h2>
+        </div>
+        <div class="steps-inline">
+          <div class="step-inline">
+            <span class="step-inline__num">1</span>
+            <div><h3>Pilih jadwal</h3><p>Lihat ruang yang kosong pada tanggal dan jam Anda.</p></div>
           </div>
-        </article>
-        <article class="door door--staff">
-          <span class="door__tag">Staf Pengelola</span>
-          <h2>Konfirmasi cepat, keputusan tercatat rapi</h2>
-          <p>Antrean tersusun rapi, detail pengajuan lengkap, dan setiap keputusan tercatat. Staf dapat langsung mengonfirmasi dari satu dashboard.</p>
-          <div class="door__footer">
-            <a class="btn btn--gold" href="staf.html">Buka dashboard staf</a>
-            <span class="door__meta">Antrean real-time</span>
+          <div class="step-inline">
+            <span class="step-inline__num">2</span>
+            <div><h3>Isi formulir</h3><p>Lengkapi kegiatan dan fasilitas. Cukup satu menit.</p></div>
           </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="ruangan">
-    <div class="wrap">
-      <div class="section__head">
-        <span class="eyebrow">Ruangan &amp; Aturan</span>
-        <h2>Kenali jadwal tiap ruangan</h2>
-        <p class="lead">Aturan hari dan jam dijalankan otomatis oleh sistem, sehingga ruangan yang tidak sesuai tidak bisa dipilih.</p>
-      </div>
-      <div class="rules">
-        <div class="panel">
-          <h3>Ringkasan aturan</h3>
-          <ul class="rule-list">
-            <li><span class="dot"></span><span><strong>Lab iMac, Lecture 2B, A 1.2, dan Studio 3</strong> hanya dapat dipinjam pada Sabtu dan Minggu, pukul 08.00–17.00.</span></li>
-            <li><span class="dot"></span><span><strong>Aula</strong> dapat dipinjam Senin–Jumat pukul 08.00–17.00, dan Sabtu paling lambat selesai pukul 14.00.</span></li>
-            <li><span class="dot"></span><span><strong>Aula tutup pada hari Minggu.</strong></span></li>
-            <li><span class="dot"></span><span>Ruangan yang sudah dipesan pada waktu yang sama tetap terlihat, tetapi tombol pilih nonaktif.</span></li>
-            <li><span class="dot"></span><span>Alasan peminjaman wajib diisi dan ditinjau oleh staf.</span></li>
-          </ul>
-          <div class="note-box" style="margin-top:22px;">Pengajuan minimal H-1 pukul 12.00 WITA dan maksimal 30 hari ke depan. Jam operasional dapat disesuaikan oleh admin.</div>
-        </div>
-        <div class="panel">
-          <h3>Matriks ketersediaan</h3>
-          <table class="room-table">
-            <thead>
-              <tr><th>Ruangan</th><th>Hari</th><th>Jam</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Lab iMac</td><td><span class="tag tag--weekend">Sabtu–Minggu</span></td><td>08.00–17.00</td></tr>
-              <tr><td>Lecture 2B</td><td><span class="tag tag--weekend">Sabtu–Minggu</span></td><td>08.00–17.00</td></tr>
-              <tr><td>A 1.2</td><td><span class="tag tag--weekend">Sabtu–Minggu</span></td><td>08.00–17.00</td></tr>
-              <tr><td>Studio 3</td><td><span class="tag tag--weekend">Sabtu–Minggu</span></td><td>08.00–17.00</td></tr>
-              <tr><td>Aula</td><td><span class="tag tag--weekday">Senin–Jumat</span></td><td>08.00–17.00</td></tr>
-              <tr><td>Aula</td><td><span class="tag tag--weekend">Sabtu</span></td><td>08.00–14.00</td></tr>
-            </tbody>
-          </table>
+          <div class="step-inline">
+            <span class="step-inline__num">3</span>
+            <div><h3>Pantau status</h3><p>Staf memberi keputusan. Status selalu terlihat jelas.</p></div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section section--alt" id="fasilitas">
-    <div class="wrap">
-      <div class="section__head center">
-        <span class="eyebrow">Fasilitas</span>
-        <h2>Fasilitas yang bisa diajukan</h2>
-        <p class="lead">Saat mengajukan peminjaman, pilih fasilitas yang dibutuhkan agar staf dapat menyiapkan ruangan dengan tepat.</p>
+    <section class="section section--alt section--simple" id="ruangan">
+      <div class="wrap">
+        <div class="section__head section__head--row">
+          <div>
+            <span class="eyebrow">Ruangan</span>
+            <h2>Pilih ruang yang pas.</h2>
+          </div>
+          <a class="link-arrow" href="ketersediaan.html">Lihat ketersediaan lengkap →</a>
+        </div>
+        <div class="catalog catalog--simple" id="catalog"></div>
       </div>
-      <div class="facilities">
-        <div class="facility"><span class="facility__ico">PR</span>Proyektor<small>Presentasi &amp; kelas</small></div>
-        <div class="facility"><span class="facility__ico">TV</span>Layar / TV<small>Visual &amp; media</small></div>
-        <div class="facility"><span class="facility__ico">SO</span>Sound system<small>Acara &amp; musik</small></div>
-        <div class="facility"><span class="facility__ico">MI</span>Mikrofon<small>Bicara &amp; MC</small></div>
-        <div class="facility"><span class="facility__ico">AC</span>AC<small>Kenyamanan ruangan</small></div>
-        <div class="facility"><span class="facility__ico">PB</span>Papan tulis<small>Diskusi &amp; belajar</small></div>
-        <div class="facility"><span class="facility__ico">MK</span>Meja &amp; kursi<small>Penataan peserta</small></div>
-        <div class="facility"><span class="facility__ico">IN</span>Koneksi internet<small>Kerja &amp; akses data</small></div>
-        <div class="facility"><span class="facility__ico">PG</span>Panggung<small>Acara besar</small></div>
-        <div class="facility"><span class="facility__ico">TC</span>Tata cahaya<small>Produksi &amp; panggung</small></div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="cta-band">
+    <section class="section section--simple">
+      <div class="wrap">
+        <div class="section__head center">
+          <span class="eyebrow">Galeri Ruang</span>
+          <h2>Ruang yang bisa Anda pinjam.</h2>
+          <p class="muted" style="margin-top:10px;">Foto resmi dari idbbali.ac.id. Semua ruang di bawah ini tersedia di halaman Ruangan.</p>
+        </div>
+        <div class="gallery-strip gallery-strip--room" id="room-gallery"></div>
+      </div>
+    </section>
+
+    <section class="staff-band">
+      <div class="wrap staff-band__inner">
         <div>
-          <h2>Siap memakai ruangan?</h2>
-          <p>Mulai dengan memilih jadwal, lalu lihat ruangan yang tersedia.</p>
+          <h3>Staf pengelola ruangan?</h3>
+          <p>Tinjau pengajuan dan jadwal hari ini dari satu dashboard.</p>
         </div>
-        <div class="hero__actions" style="margin:0;">
-          <a class="btn btn--gold" href="pinjam.html">Pinjam ruangan</a>
-          <a class="btn btn--ghost" href="staf.html">Masuk sebagai staf</a>
-        </div>
+        <a class="btn btn--outline" href="staf.html">Buka dashboard staf</a>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <footer class="site-footer">
     <div class="wrap">
-      <span>IDB Space · Institut Desain dan Bisnis Bali</span>
-      <span>Peminjaman ruangan kampus · WITA (UTC+8)</span>
+      <span>SERU · Institut Desain dan Bisnis Bali</span>
+      <span>WITA (UTC+8) · Sarana Prasarana</span>
     </div>
   </footer>
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/common.js"></script>
+  <script src="assets/js/index.js"></script>
+  <script src="assets/js/interactions.js"></script>
 </body>
 </html>

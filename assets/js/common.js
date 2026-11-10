@@ -1,4 +1,4 @@
-/* IDB Space — shared UI helpers */
+/* SERU — shared UI helpers */
 
 function escapeHtml(value) {
   return String(value == null ? '' : value)
@@ -84,6 +84,37 @@ function relativeFrom(iso) {
   return days + ' hari lalu';
 }
 
+/* Header session state: swap "Masuk" for the signed-in user's name. */
+function renderAuthUI() {
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  document.querySelectorAll('[data-auth-link]').forEach(function (link) {
+    if (user) {
+      link.textContent = user.role === 'admin' ? 'Dashboard Staf' : 'Akun Saya';
+      link.href = user.role === 'admin' ? 'staf.html' : 'riwayat.html';
+      if (!link.parentElement.querySelector('.logout-link')) {
+        const out = document.createElement('a');
+        out.href = '#';
+        out.className = 'logout-link';
+        out.textContent = 'Keluar';
+        out.addEventListener('click', function (event) {
+          event.preventDefault();
+          logoutUser();
+          window.location.href = 'index.html';
+        });
+        link.after(out);
+      }
+    } else {
+      link.textContent = 'Masuk';
+      link.href = 'masuk.html';
+      const existing = link.parentElement.querySelector('.logout-link');
+      if (existing) existing.remove();
+    }
+  });
+  document.querySelectorAll('[data-user-name]').forEach(function (el) {
+    el.textContent = user ? user.name.split(' ')[0] : '';
+  });
+}
+
 function initMobileNav() {
   const header = document.querySelector('.site-header');
   if (!header) return;
@@ -131,4 +162,5 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof seedDemoData === 'function') seedDemoData();
   initSlideshow();
   initMobileNav();
+  renderAuthUI();
 });

@@ -23,10 +23,23 @@
   };
 
   document.addEventListener('DOMContentLoaded', function () {
-    ['live-status', 'stat-menunggu', 'stat-perbaikan', 'stat-disetujui', 'stat-ditolak',
-      'tabs', 'search', 'filter-room', 'filter-date', 'reset-filter', 'queue',
+    ['live-status', 'stat-menunggu', 'stat-perbaikan', 'stat-disetujui', 'stat-ditolak', 'stat-today',
+      'today-date', 'today-list', 'tabs', 'search', 'filter-room', 'filter-date', 'reset-filter', 'queue',
       'drawer', 'drawer-backdrop', 'drawer-close', 'drawer-title', 'drawer-ref',
-      'drawer-body', 'drawer-foot'].forEach(function (id) { els[id] = $(id); });
+      'drawer-body', 'drawer-foot', 'admin-gate', 'dash-content'].forEach(function (id) { els[id] = $(id); });
+
+    if (typeof isAdmin === 'function' && !isAdmin()) {
+      els['admin-gate'].hidden = false;
+      els['dash-content'].hidden = true;
+      return;
+    }
+    els['admin-gate'].hidden = true;
+    els['dash-content'].hidden = false;
+
+    const user = getCurrentUser();
+    if (user && els['live-status']) {
+      els['live-status'].textContent = 'Terhubung · ' + user.name;
+    }
 
     ROOMS.forEach(function (room) {
       const opt = document.createElement('option');
@@ -39,6 +52,7 @@
     render();
 
     setInterval(render, 2000);
+    window.addEventListener('seru:bookings', render);
     window.addEventListener('storage', function (e) {
       if (e.key === STORAGE_KEY) render();
     });
@@ -94,6 +108,11 @@
       if (open) openDrawer(open.getAttribute('data-open'));
     });
 
+    els['today-list'].addEventListener('click', function (e) {
+      const open = e.target.closest('[data-open]');
+      if (open) openDrawer(open.getAttribute('data-open'));
+    });
+
     els['drawer-foot'].addEventListener('click', function (e) {
       const action = e.target.closest('[data-action]');
       if (!action) return;
@@ -129,6 +148,8 @@
       el.textContent = counts[el.getAttribute('data-count')] || 0;
     });
 
+    renderToday(all);
+
     const filtered = all.filter(function (b) {
       if (state.tab !== 'semua' && b.status !== state.tab) return false;
       if (state.room && b.roomId !== state.room) return false;
@@ -146,6 +167,33 @@
     }
 
     els.queue.innerHTML = filtered.map(queueItem).join('');
+  }
+
+  function renderToday(all) {
+    const today = todayISO();
+    els['today-date'].textContent = formatDate(today) + ' · WITA';
+
+    const todayBookings = all.filter(function (b) {
+      return b.date === today && (b.status === 'disetujui' || b.status === 'menunggu');
+    }).sort(function (a, b) {
+      return a.start < b.start ? -1 : 1;
+    });
+
+    els['stat-today'].textContent = todayBookings.filter(function (b) { return b.status === 'disetujui'; }).length;
+
+    if (!todayBookings.length) {
+      els['today-list'].innerHTML = '<div class="today-empty">Tidak ada peminjaman terjadwal hari ini.</div>';
+      return;
+    }
+
+    els['today-list'].innerHTML = todayBookings.map(function (b) {
+      return '<button class="today-row" type="button" data-open="' + b.id + '">' +
+        '<span class="today-row__time">' + escapeHtml(b.start + '–' + b.end) + '</span>' +
+        '<span class="today-row__main"><strong>' + escapeHtml(b.roomName) + '</strong>' +
+          '<span>' + escapeHtml(b.activity) + ' · ' + escapeHtml(b.name) + '</span></span>' +
+        '<span class="' + statusClass(b.status) + '">' + escapeHtml(STATUS_LABELS[b.status]) + '</span>' +
+      '</button>';
+    }).join('');
   }
 
   function isUrgent(b) {
@@ -197,6 +245,7 @@
     els.drawer.classList.add('is-open');
     els['drawer-backdrop'].classList.add('is-open');
     els.drawer.setAttribute('aria-hidden', 'false');
+    els.drawer.removeAttribute('inert');
     document.body.style.overflow = 'hidden';
     const focusable = els['drawer-close'];
     if (focusable) focusable.focus();
@@ -207,6 +256,7 @@
     els.drawer.classList.remove('is-open');
     els['drawer-backdrop'].classList.remove('is-open');
     els.drawer.setAttribute('aria-hidden', 'true');
+    els.drawer.setAttribute('inert', '');
     document.body.style.overflow = '';
   }
 

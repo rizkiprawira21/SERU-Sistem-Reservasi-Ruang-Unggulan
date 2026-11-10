@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — SERU</title>
+  <meta name="description" content="Masuk ke SERU, sistem peminjaman ruangan kampus Institut Desain dan Bisnis Bali.">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="app-shell">
+  <header class="site-header site-header--solid">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="SERU, beranda">
+        <img class="brand__logo brand__logo--dark" src="assets/img/logo-idb.png" alt="IDB Bali">
+        <span class="brand__name">
+          <strong>SERU</strong>
+          <span>Sistem Reservasi Ruang Unggulan</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navigasi">
+        <a href="index.html">Beranda</a>
+        <a href="ketersediaan.html">Ketersediaan</a>
+        <a href="riwayat.html">Cek Status</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="login">
+    <div class="wrap login__grid">
+      <section class="login__intro">
+        <span class="eyebrow">Akun Kampus</span>
+        <h1>Satu akun untuk meminjam dan mengelola ruangan.</h1>
+        <p>Masuk dengan akun kampus IDB. Pemohon dapat mengajukan ruangan dan memantau status; staf mengelola antrean persetujuan.</p>
+        <ul class="login__points">
+          <li><span class="dot"></span><span>Hanya sivitas akademika IDB yang dapat meminjam.</span></li>
+          <li><span class="dot"></span><span>Tidak ada jadwal bentrok — setiap slot diperiksa otomatis.</span></li>
+          <li><span class="dot"></span><span>Status pengajuan selalu terlihat jelas.</span></li>
+        </ul>
+        <div class="login__note">Versi demo: gunakan salah satu akun contoh di samping, tanpa kata sandi.</div>
+      </section>
+
+      <section class="card login__card">
+        <div class="card__head">
+          <div>
+            <h2>Masuk ke SERU</h2>
+            <p>Pilih peran untuk mencoba alurnya.</p>
+          </div>
+        </div>
+
+        <div class="role-switch" role="tablist" aria-label="Pilih peran">
+          <button class="role-switch__btn is-active" type="button" data-role="pemohon" role="tab" aria-selected="true">
+            <strong>Pemohon</strong>
+            <span>Mahasiswa, dosen, staf, UKM</span>
+          </button>
+          <button class="role-switch__btn" type="button" data-role="admin" role="tab" aria-selected="false">
+            <strong>Staf Pengelola</strong>
+            <span>Sarana prasarana</span>
+          </button>
+        </div>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="login-name">Nama lengkap<span class="req">*</span></label>
+            <input class="input" type="text" id="login-name" required>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="login-identity"><span id="identity-label">NIM / NIDN / NIP</span><span class="req">*</span></label>
+              <input class="input" type="text" id="login-identity" required>
+            </div>
+            <div class="field">
+              <label for="login-type">Jenis pemohon</label>
+              <select class="select" id="login-type"></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="login-email">Email kampus<span class="req">*</span></label>
+            <input class="input" type="email" id="login-email" required>
+          </div>
+          <div class="form-actions" style="margin-top:22px;">
+            <button class="btn btn--primary btn--block" type="submit">Masuk</button>
+          </div>
+          <p class="login__hint">Data akun hanya disimpan di perangkat ini untuk keperluan demo.</p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/masuk.js"></script>
+  <script src="assets/js/interactions.js"></script>
+</body>
+</html>
